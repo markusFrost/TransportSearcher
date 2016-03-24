@@ -1,6 +1,7 @@
 package database;
 
 import models.Bus;
+import models.Station;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -44,7 +45,33 @@ public class DbHelper {
                 e.printStackTrace();
             }
         }
+    }
 
+    public static void addStation(Station item){
+        Connection connection = null;
+        Statement statement = null;
 
+        connection = TransportDB.getConnection();
+        try {
+            statement = connection.createStatement();
+
+            final String query = "insert into Station (name) values('" +
+                    item.getName()  + "')";
+
+            statement.executeUpdate(query);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+      /*  finally {
+            try {
+                statement.close();
+                connection.close();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }*/
     }
 }

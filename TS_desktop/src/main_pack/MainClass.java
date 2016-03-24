@@ -4,6 +4,7 @@ import database.DbHelper;
 import loaders.InfoLoader;
 import models.Bus;
 import models.Pair;
+import models.Station;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,7 +16,9 @@ public class MainClass {
     public static void main(String[] args) {
         System.out.println("Hello");
 
-        testConn();
+       // testConn();
+
+        loadCurrentBus();
     }
 
     private static void testConn(){
@@ -37,7 +40,12 @@ public class MainClass {
         String html = infoLoader.getHtmlCodyByUrl(url);
 
         final String query1 = "table#table1>thead>tr>th>a";
-        List<String> listStations1 = infoLoader.getListStations(html, query1);
+        List<Station> listStations1 = infoLoader.getListStations(html, query1);
+
+        DbHelper dbHelper = DbHelper.getInstance();
+        for (Station station : listStations1) {
+            dbHelper.addStation(station);
+        }
 
         final String query2 = "table#table1>tbody>tr>td";
 
@@ -46,7 +54,7 @@ public class MainClass {
         //--------------------------
 
         final String query3 = "table#table2>thead>tr>th>a";
-        List<String> listStations2 = infoLoader.getListStations(html, query3);
+        List<Station> listStations2 = infoLoader.getListStations(html, query3);
 
         final String query4 = "table#table2>tbody>tr>td";
 

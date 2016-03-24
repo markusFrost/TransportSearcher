@@ -2,6 +2,7 @@ package loaders;
 
 import models.Bus;
 import models.Pair;
+import models.Station;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -98,8 +99,9 @@ public class InfoLoader {
 
     }
 
-    public List<String> getListStations(String html, final String query){
-        List<String> listStations = new ArrayList<>();
+    public List<Station> getListStations(String html, final String query){
+        List<Station> listStations = new ArrayList<>();
+        Station item = null;
 
         Document doc = Jsoup.parse(html);
 
@@ -108,7 +110,10 @@ public class InfoLoader {
 
         for (Element link : list){
             String name = link.text();
-            listStations.add(name);
+
+            item = new Station();
+            item.setName(name);
+            listStations.add(item);
         }
 
         return listStations;
