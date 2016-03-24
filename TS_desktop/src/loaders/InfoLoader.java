@@ -6,6 +6,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import utils.HelpUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -113,7 +114,7 @@ public class InfoLoader {
         return listStations;
     }
 
-    public List<Bus> getListBuses(String html){
+    public List<Bus> getListBuses(String html, String url){
 
         List<Bus> listBuses = new ArrayList<>();
         Bus bus = null;
@@ -128,7 +129,8 @@ public class InfoLoader {
             bus = new Bus();
 
             bus.setName(link.text());
-            bus.setUrl(link.attr("href"));
+            bus.setUrl(
+                    HelpUtils.changeUrl(url, link.attr("href") ));
 
             listBuses.add(bus);
         }
