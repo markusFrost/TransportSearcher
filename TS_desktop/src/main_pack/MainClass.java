@@ -4,6 +4,10 @@ import loaders.InfoLoader;
 import models.Bus;
 import models.Pair;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.List;
 
 public class MainClass {
@@ -11,7 +15,43 @@ public class MainClass {
         System.out.println("Hello");
 
         //loadAllBuses();
-        loadCurrentBus();
+        //loadCurrentBus();
+
+        connectToDb();
+    }
+
+    private static void connectToDb() {
+        Connection connection = null;
+        ResultSet resultSet = null;
+        Statement statement = null;
+
+        final String dbPath = "C:\\Java Projects\\TransportSearcher\\db\\Transport.db";
+        // statement.executeUpdate("insert into person values(2, 'yui')");
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+            statement = connection.createStatement();
+            resultSet = statement
+                    .executeQuery("select * from bus");
+            while (resultSet.next()) {
+                System.out.println("BUS NAME:"
+                        + resultSet.getString("name"));
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                resultSet.close();
+                statement.close();
+                connection.close();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static void loadCurrentBus(){
