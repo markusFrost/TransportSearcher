@@ -1,5 +1,6 @@
 package main_pack;
 
+import database.DbHelper;
 import loaders.InfoLoader;
 import models.Bus;
 import models.Pair;
@@ -17,9 +18,21 @@ public class MainClass {
         //loadAllBuses();
         //loadCurrentBus();
 
-        connectToDb();
+       // connectToDb();
+
+        testConn();
     }
 
+    private static void testConn(){
+        DbHelper dbHelper = DbHelper.getInstance();
+
+       List<Bus> list = loadAllBuses();
+        Bus bus = list.get(0);
+        bus.setUrl(bus.getUrl());
+        bus.setName(bus.getName());
+
+        dbHelper.addBus(bus);
+    }
     private static void connectToDb() {
         Connection connection = null;
         ResultSet resultSet = null;
@@ -80,16 +93,14 @@ public class MainClass {
         System.out.println(html);
     }
 
-    private static void loadAllBuses() {
+    private static List<Bus> loadAllBuses() {
         final String url = "http://mybuses.ru/moscow/";
 
         InfoLoader infoLoader = InfoLoader.getInstance();
 
         String html = infoLoader.getHtmlCodyByUrl(url);
 
-        List<Bus> listBuses = infoLoader.getListBuses(html);
+        return infoLoader.getListBuses(html);
 
-
-        System.out.println(html);
     }
 }
