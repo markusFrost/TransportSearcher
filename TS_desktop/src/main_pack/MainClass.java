@@ -15,11 +15,6 @@ public class MainClass {
     public static void main(String[] args) {
         System.out.println("Hello");
 
-        //loadAllBuses();
-        //loadCurrentBus();
-
-       // connectToDb();
-
         testConn();
     }
 
@@ -32,39 +27,6 @@ public class MainClass {
         bus.setName(bus.getName());
 
         dbHelper.addBus(bus);
-    }
-    private static void connectToDb() {
-        Connection connection = null;
-        ResultSet resultSet = null;
-        Statement statement = null;
-
-        final String dbPath = "C:\\Java Projects\\TransportSearcher\\db\\Transport.db";
-        // statement.executeUpdate("insert into person values(2, 'yui')");
-
-        try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-            statement = connection.createStatement();
-            resultSet = statement
-                    .executeQuery("select * from bus");
-            while (resultSet.next()) {
-                System.out.println("BUS NAME:"
-                        + resultSet.getString("name"));
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally {
-            try {
-                resultSet.close();
-                statement.close();
-                connection.close();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private static void loadCurrentBus(){
@@ -100,7 +62,7 @@ public class MainClass {
 
         String html = infoLoader.getHtmlCodyByUrl(url);
 
-        return infoLoader.getListBuses(html);
+        return infoLoader.getListBuses(html, url);
 
     }
 }
