@@ -67,6 +67,8 @@ public class DbHelper {
 
             statement.executeUpdate(query + "Bus");
 
+            statement.executeUpdate(query + "BusToStation");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
