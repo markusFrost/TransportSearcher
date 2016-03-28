@@ -18,13 +18,19 @@ public class DbHelper {
         return sDbHelper;
     }
 
-    public static int addBus(Bus item){
+    public int addBus(Bus item){
         Connection connection = null;
         Statement statement = null;
 
         connection = TransportDB.getConnection();
         try {
             statement = connection.createStatement();
+
+            final int busId = getBusByName(item.getName());
+            //проверём мб такой автобус уже существует
+            if(busId > 0){
+                return busId;
+            }
 
             final String query = "insert into Bus (name, url) values('" +
                     item.getName() + "', '" + item.getUrl() + "')";
@@ -106,7 +112,7 @@ public class DbHelper {
         return -1;
     }
 
-    public static int addStation(Station item){
+    public  int addStation(Station item){
         Connection connection = null;
         Statement statement = null;
 
@@ -114,7 +120,12 @@ public class DbHelper {
         try {
             statement = connection.createStatement();
 
-            //проверить есть ли станция с таким именем
+            int stationId = getStationByName(item.getName());
+            //Нужно посмотреть мб такая станция уже есть в БД
+
+            if(stationId > 0){
+                return stationId;
+            }
 
             final String query = "insert into Station (name) values('" +
                     item.getName()  + "')";
@@ -138,5 +149,52 @@ public class DbHelper {
             e.printStackTrace();
         }
         return -1;
+    }
+
+
+    public int getStationByName(String name){
+        final String sql = "select * from Station where name = " +
+                "'" + name + "'";
+
+        Connection connection = null;
+        Statement statement = null;
+
+        connection = TransportDB.getConnection();
+        try {
+            statement = connection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()){
+                return rs.getInt("_id");
+            }
+            rs.close();
+
+        } catch (Exception e) {}
+        return -1;
+
+    }
+
+    public int getBusByName(String name){
+        final String sql = "select * from Bus where name = " +
+                "'" + name + "'";
+
+        Connection connection = null;
+        Statement statement = null;
+
+        connection = TransportDB.getConnection();
+        try {
+            statement = connection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()){
+                return rs.getInt("_id");
+            }
+            rs.close();
+
+        } catch (Exception e) {}
+        return -1;
+
     }
 }
