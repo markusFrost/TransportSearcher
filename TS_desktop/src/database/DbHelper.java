@@ -5,7 +5,6 @@ import models.Station;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DbHelper {
@@ -19,7 +18,7 @@ public class DbHelper {
         return sDbHelper;
     }
 
-    public static void addBus(Bus item){
+    public static int addBus(Bus item){
         Connection connection = null;
         Statement statement = null;
 
@@ -30,21 +29,48 @@ public class DbHelper {
             final String query = "insert into Bus (name, url) values('" +
                     item.getName() + "', '" + item.getUrl() + "')";
 
-            statement.executeUpdate(query);
+            int affectedRows = statement.executeUpdate(query);
+
+            if (affectedRows == 0) {
+                return -1;
+            }
+
+            try (ResultSet rs = statement.getGeneratedKeys()) {
+                if (rs.next()) {
+                   // System.out.println(rs.getInt(1));
+                    return rs.getInt(1);
+                }
+                rs.close();
+
+            }
+
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        finally {
-            try {
-                statement.close();
-                connection.close();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
+        return -1;
+    }
+
+    public void clearTable(){
+        final String query = "delete from ";
+
+        Connection connection = null;
+        Statement statement = null;
+
+        connection = TransportDB.getConnection();
+        try {
+            statement = connection.createStatement();
+
+            statement.executeUpdate(query + "Station");
+
+            statement.executeUpdate(query + "Bus");
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
     }
 
     public static void addStation(Station item){
