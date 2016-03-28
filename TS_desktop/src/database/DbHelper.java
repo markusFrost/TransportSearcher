@@ -73,7 +73,7 @@ public class DbHelper {
 
     }
 
-    public static void addStation(Station item){
+    public static int addStation(Station item){
         Connection connection = null;
         Statement statement = null;
 
@@ -84,20 +84,24 @@ public class DbHelper {
             final String query = "insert into Station (name) values('" +
                     item.getName()  + "')";
 
-            statement.executeUpdate(query);
+            int affectedRows = statement.executeUpdate(query);
+
+            if (affectedRows == 0) {
+                return -1;
+            }
+
+            try (ResultSet rs = statement.getGeneratedKeys()) {
+                if (rs.next()) {
+                    // System.out.println(rs.getInt(1));
+                    return rs.getInt(1);
+                }
+                rs.close();
+
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-      /*  finally {
-            try {
-                statement.close();
-                connection.close();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }*/
+        return -1;
     }
 }
