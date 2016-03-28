@@ -73,6 +73,37 @@ public class DbHelper {
 
     }
 
+    public static int addBusToStation(int busId, int stationId){
+        Connection connection = null;
+        Statement statement = null;
+
+        connection = TransportDB.getConnection();
+        try {
+            statement = connection.createStatement();
+
+            final String query = "insert into BusToStation (bus_id, station_id) values(" +
+                    busId + ", " + stationId  + ")";
+
+            int affectedRows = statement.executeUpdate(query);
+
+            if (affectedRows == 0) {
+                return -1;
+            }
+
+            try (ResultSet rs = statement.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+                rs.close();
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
     public static int addStation(Station item){
         Connection connection = null;
         Statement statement = null;
