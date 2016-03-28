@@ -34,7 +34,7 @@ public class MainClass {
     }*/
 
     private static void loadCurrentBus(){
-        final String url = "http://mybuses.ru/moscow/bus/761/";
+        final String url = "http://mybuses.ru/moscow/bus/203/";
 
         InfoLoader infoLoader = InfoLoader.getInstance();
 
@@ -44,7 +44,7 @@ public class MainClass {
 
         Bus bus = new Bus();
         bus.setUrl(url);
-        bus.setName("761");
+        bus.setName("203");
 
         HtmlWorker.loadBusInfo(query1, html, bus);
 
@@ -75,11 +75,12 @@ public class MainClass {
         //--------------------------
 
         final String query3 = "table#table2>thead>tr>th>a";
-        List<Station> listStations2 = infoLoader.getListStations(html, query3);
+        HtmlWorker.loadBusInfo(query3, html, bus);
+        //List<Station> listStations2 = infoLoader.getListStations(html, query3);
 
         final String query4 = "table#table2>tbody>tr>td";
 
-        Pair<List<List<String>>, List<List<String>>> pair2 = infoLoader.getListTransportTable(html,query4, listStations2.size());
+       // Pair<List<List<String>>, List<List<String>>> pair2 = infoLoader.getListTransportTable(html,query4, listStations2.size());
 
 //        System.out.println(html);
     }

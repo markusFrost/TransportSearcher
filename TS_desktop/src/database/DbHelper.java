@@ -114,6 +114,8 @@ public class DbHelper {
         try {
             statement = connection.createStatement();
 
+            //проверить есть ли станция с таким именем
+
             final String query = "insert into Station (name) values('" +
                     item.getName()  + "')";
 

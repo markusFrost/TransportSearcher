@@ -7,6 +7,13 @@ import models.Station;
 import java.util.List;
 
 public class HtmlWorker {
+    //этот метод получает на вход html детальной страницы автобуса
+    // и в зависимсти от введённыъ параметров читает станции
+    // после этого автобус сохраняется
+    //станции сохраняются
+    //и их ид сохраняются в таблице
+    //за счёт добавление индексов уникальности данные
+    //будь то автобус, станция или их ид - не дублируются
     public static void loadBusInfo(
             final String query,
             final String html, final Bus bus){
@@ -20,7 +27,7 @@ public class HtmlWorker {
         List<Station> listStations = infoLoader.getListStations(html, query);
 
         DbHelper dbHelper = DbHelper.getInstance();
-        dbHelper.clearTable(); //это пока тестовое - очищаем до этого все что было
+//        dbHelper.clearTable(); //это пока тестовое - очищаем до этого все что было
 
         int busId = dbHelper.addBus(bus); //добавляем автобус в таблицу
         // и получаем его ид
@@ -31,9 +38,10 @@ public class HtmlWorker {
         for (Station station : listStations) {
             int stationId =   dbHelper.addStation(station); //добавляем каждую станцию в БД
 
-            int bs_id = dbHelper.addBusToStation(busId, stationId); // и готовые ид добавляем в сответствующую таблицу
-
-            System.out.println(bs_id);
+            if(busId > 0 && stationId > 0) {
+                int bs_id = dbHelper.addBusToStation(busId, stationId); // и готовые ид добавляем в сответствующую таблицу
+                System.out.println(bs_id);
+            }
         }
 
     }
