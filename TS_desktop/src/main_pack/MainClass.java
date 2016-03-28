@@ -17,11 +17,11 @@ public class MainClass {
         System.out.println("Hello");
 
        // testConn();
-
+// добавить в бд и связать остальные объекты
         loadCurrentBus();
     }
 
-    private static void testConn(){
+  /*  private static void testConn(){
         DbHelper dbHelper = DbHelper.getInstance();
 
        List<Bus> list = loadAllBuses();
@@ -30,7 +30,7 @@ public class MainClass {
         bus.setName(bus.getName());
 
         dbHelper.addBus(bus);
-    }
+    }*/
 
     private static void loadCurrentBus(){
         final String url = "http://mybuses.ru/moscow/bus/761/";
@@ -43,8 +43,21 @@ public class MainClass {
         List<Station> listStations1 = infoLoader.getListStations(html, query1);
 
         DbHelper dbHelper = DbHelper.getInstance();
+        dbHelper.clearTable();
+
+        Bus bus = new Bus();
+        bus.setName("761");
+        bus.setUrl(url);
+
+        int busId = dbHelper.addBus(bus);
+        System.out.println(busId);
+
         for (Station station : listStations1) {
-            dbHelper.addStation(station);
+          int stationId =   dbHelper.addStation(station);
+
+            int bs_id = dbHelper.addBusToStation(busId, stationId);
+
+            System.out.println(bs_id);
         }
 
         final String query2 = "table#table1>tbody>tr>td";
@@ -60,7 +73,7 @@ public class MainClass {
 
         Pair<List<List<String>>, List<List<String>>> pair2 = infoLoader.getListTransportTable(html,query4, listStations2.size());
 
-        System.out.println(html);
+//        System.out.println(html);
     }
 
     private static List<Bus> loadAllBuses() {
