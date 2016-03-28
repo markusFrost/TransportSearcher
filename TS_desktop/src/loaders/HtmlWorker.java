@@ -27,7 +27,6 @@ public class HtmlWorker {
         List<Station> listStations = infoLoader.getListStations(html, query);
 
         DbHelper dbHelper = DbHelper.getInstance();
-//        dbHelper.clearTable(); //это пока тестовое - очищаем до этого все что было
 
         int busId = dbHelper.addBus(bus); //добавляем автобус в таблицу
         // и получаем его ид

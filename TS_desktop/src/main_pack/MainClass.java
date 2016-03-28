@@ -46,6 +46,9 @@ public class MainClass {
         bus.setUrl(url);
         bus.setName("203");
 
+        DbHelper dbHelper = DbHelper.getInstance();
+        //dbHelper.clearTable(); //это пока тестовое - очищаем до этого все что было
+
         HtmlWorker.loadBusInfo(query1, html, bus);
 
        /* List<Station> listStations1 = infoLoader.getListStations(html, query1);
