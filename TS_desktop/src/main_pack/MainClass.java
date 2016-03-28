@@ -1,6 +1,7 @@
 package main_pack;
 
 import database.DbHelper;
+import loaders.HtmlWorker;
 import loaders.InfoLoader;
 import models.Bus;
 import models.Pair;
@@ -40,7 +41,14 @@ public class MainClass {
         String html = infoLoader.getHtmlCodyByUrl(url);
 
         final String query1 = "table#table1>thead>tr>th>a";
-        List<Station> listStations1 = infoLoader.getListStations(html, query1);
+
+        Bus bus = new Bus();
+        bus.setUrl(url);
+        bus.setName("761");
+
+        HtmlWorker.loadBusInfo(query1, html, bus);
+
+       /* List<Station> listStations1 = infoLoader.getListStations(html, query1);
 
         DbHelper dbHelper = DbHelper.getInstance();
         dbHelper.clearTable();
@@ -58,11 +66,11 @@ public class MainClass {
             int bs_id = dbHelper.addBusToStation(busId, stationId);
 
             System.out.println(bs_id);
-        }
+        }*/
 
         final String query2 = "table#table1>tbody>tr>td";
 
-        Pair<List<List<String>>, List<List<String>>> pair1 = infoLoader.getListTransportTable(html,query2, listStations1.size());
+       // Pair<List<List<String>>, List<List<String>>> pair1 = infoLoader.getListTransportTable(html,query2, listStations1.size());
 
         //--------------------------
 
