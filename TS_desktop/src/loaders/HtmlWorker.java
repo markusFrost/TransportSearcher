@@ -35,16 +35,31 @@ public class HtmlWorker {
         // и получаем его ид
 
         //проверок на ложь буду делать по мере необходимости
-        System.out.println(busId);
+       // System.out.println("busId = " + busId);
+
+        int weight = 1;
 
         for (Station station : listStations) {
             int stationId =   dbHelper.addStation(station); //добавляем каждую станцию в БД
 
             if(busId > 0 && stationId > 0) {
                 int bs_id = dbHelper.addBusToStation(busId, stationId); // и готовые ид добавляем в сответствующую таблицу
-                System.out.println(bs_id);
+
+                //dbHelper.addBusToStationInfo(bs_id, weight, 1);
+                weight++;
+
+               // System.out.println("bsToStId = " + bs_id);
             }
         }
 
     }
 }
+
+/*
+
+select distinct Bus.name as bus_name, Station.name as station_name from BusToStation, Bus, Station where (BusToStation.station_id = 314 or BusToStation.station_id = 320)
+and BusToStation.station_id = Station._id
+
+ищем автобусы, которые подъезжают к указанным станциям
+
+ */

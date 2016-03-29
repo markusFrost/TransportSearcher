@@ -34,7 +34,9 @@ public class MainClass {
     }*/
 
     private static void loadCurrentBus(){
-        final String url = "http://mybuses.ru/moscow/bus/203/";
+
+        final String busName = "245";
+        final String url = "http://mybuses.ru/moscow/bus/" + busName  + "/";
 
         InfoLoader infoLoader = InfoLoader.getInstance();
 
@@ -44,10 +46,10 @@ public class MainClass {
 
         Bus bus = new Bus();
         bus.setUrl(url);
-        bus.setName("203");
+        bus.setName(busName);
 
         DbHelper dbHelper = DbHelper.getInstance();
-        //dbHelper.clearTable(); //это пока тестовое - очищаем до этого все что было
+       // dbHelper.clearTable(); //это пока тестовое - очищаем до этого все что было
 
         HtmlWorker.loadBusInfo(query1, html, bus);
 
