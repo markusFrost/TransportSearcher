@@ -6,6 +6,7 @@ import loaders.InfoLoader;
 import models.Bus;
 import models.Pair;
 import models.Station;
+import utils.HelpUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,7 +25,7 @@ public class MainClass {
 // добавить в бд и связать остальные объекты
         final String busName = "761";
         final String path = "C:\\Java Projects\\TransportSearcher\\TS_desktop\\src\\utils\\" + busName + ".txt";
-        loadCurrentBus(path, busName);
+       // loadCurrentBus(path, busName);
     }
 
   /*  private static void testConn(){

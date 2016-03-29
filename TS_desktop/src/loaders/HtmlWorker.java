@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import utils.HelpUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +63,7 @@ public class HtmlWorker {
 
     // по детальному урлу загружает информацию об автобусе
     // а конкретно о дате прибывания на ту или иную старцнию
-    public static Pair<List<List<String>>, List<List<String>>> getListTransportTable(String html,
+    public static Pair<List<List<Long>>, List<List<Long>>> getListTransportTable(String html,
                                                                               final String query, int stationsCount){
         Document doc = Jsoup.parse(html);
 
@@ -71,9 +72,9 @@ public class HtmlWorker {
 
         int index = 0;
 
-        List<List<String>> listTableWorkDay = new ArrayList<>();
-        List<List<String>> listTableHoliday = new ArrayList<>();
-        List<String> listTime = new ArrayList<>();
+        List<List<Long>> listTableWorkDay = new ArrayList<>();
+        List<List<Long>> listTableHoliday = new ArrayList<>();
+        List<Long> listTime = new ArrayList<>();
 
         boolean isHoliday = false;
 
@@ -87,7 +88,7 @@ public class HtmlWorker {
                 isHoliday = false;
             }
             if(name.contains(":") && !isHoliday){
-                listTime.add(name); //теккущий одномерный массив расписаний
+                listTime.add(HelpUtils.convertStringToLong(name)); //теккущий одномерный массив расписаний
                 index++;
                 if(index >= stationsCount){ //когда считали все время текуго маршрута
                     listTableWorkDay.add(listTime); //заносим его в таблицу
@@ -96,7 +97,7 @@ public class HtmlWorker {
                 }
             }
             else if(name.contains(":") && isHoliday){
-                listTime.add(name);
+                listTime.add(HelpUtils.convertStringToLong(name));
                 index++;
                 if(index >= stationsCount){
                     listTableHoliday.add(listTime);
