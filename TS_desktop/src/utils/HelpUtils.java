@@ -5,4 +5,6 @@ public class HelpUtils {
         String value = mainUrl + url.replace("moscow/", "");
         return value.replace("//", "/" );
     }
+
+
 }

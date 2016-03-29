@@ -7,11 +7,14 @@ import models.Bus;
 import models.Pair;
 import models.Station;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Scanner;
 
 public class MainClass {
     public static void main(String[] args) {
@@ -19,7 +22,9 @@ public class MainClass {
 
        // testConn();
 // добавить в бд и связать остальные объекты
-        loadCurrentBus();
+        final String busName = "761";
+        final String path = "C:\\Java Projects\\TransportSearcher\\TS_desktop\\src\\utils\\" + busName + ".txt";
+        loadCurrentBus(path, busName);
     }
 
   /*  private static void testConn(){
@@ -33,59 +38,47 @@ public class MainClass {
         dbHelper.addBus(bus);
     }*/
 
-    private static void loadCurrentBus(){
+    private static void loadCurrentBus(final String path, final String busName){
 
-        final String busName = "245";
+      /*  final String busName = "761";
         final String url = "http://mybuses.ru/moscow/bus/" + busName  + "/";
 
-        InfoLoader infoLoader = InfoLoader.getInstance();
+        InfoLoader infoLoader = InfoLoader.getInstance();*/
 
-        String html = infoLoader.getHtmlCodyByUrl(url);
+        String html = "";
+        //html = infoLoader.getHtmlCodyByUrl(url);
 
-        final String query1 = "table#table1>thead>tr>th>a";
+        try {
+            html = new Scanner(new File(path)).useDelimiter("\\Z").next();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+        final String queryLoadFirstListStations = "table#table1>thead>tr>th>a";
 
         Bus bus = new Bus();
-        bus.setUrl(url);
+        bus.setUrl("url");
         bus.setName(busName);
 
         DbHelper dbHelper = DbHelper.getInstance();
-       // dbHelper.clearTable(); //это пока тестовое - очищаем до этого все что было
+        dbHelper.clearTable(); //это пока тестовое - очищаем до этого все что было
 
-        HtmlWorker.loadBusInfo(query1, html, bus);
+        final int firstStationsCount = HtmlWorker.loadBusInfo(queryLoadFirstListStations, html, bus);
 
-       /* List<Station> listStations1 = infoLoader.getListStations(html, query1);
+        final String queryLoadTimeDepartmentFirstList = "table#table1>tbody>tr>td";
 
-        DbHelper dbHelper = DbHelper.getInstance();
-        dbHelper.clearTable();
-
-        Bus bus = new Bus();
-        bus.setName("761");
-        bus.setUrl(url);
-
-        int busId = dbHelper.addBus(bus);
-        System.out.println(busId);
-
-        for (Station station : listStations1) {
-          int stationId =   dbHelper.addStation(station);
-
-            int bs_id = dbHelper.addBusToStation(busId, stationId);
-
-            System.out.println(bs_id);
-        }*/
-
-        final String query2 = "table#table1>tbody>tr>td";
-
-       // Pair<List<List<String>>, List<List<String>>> pair1 = infoLoader.getListTransportTable(html,query2, listStations1.size());
+        Pair<List<List<String>>, List<List<String>>> pairFirstTimeTable = HtmlWorker.getListTransportTable(html,
+                queryLoadTimeDepartmentFirstList, firstStationsCount);
 
         //--------------------------
 
-        final String query3 = "table#table2>thead>tr>th>a";
-        HtmlWorker.loadBusInfo(query3, html, bus);
-        //List<Station> listStations2 = infoLoader.getListStations(html, query3);
+        final String queryLoadSecondListStations = "table#table2>thead>tr>th>a";
+        final int secondStationsCount = HtmlWorker.loadBusInfo(queryLoadSecondListStations, html, bus);
 
-        final String query4 = "table#table2>tbody>tr>td";
+        final String queryLoadTimeDepartmentSecondList = "table#table2>tbody>tr>td";
 
-       // Pair<List<List<String>>, List<List<String>>> pair2 = infoLoader.getListTransportTable(html,query4, listStations2.size());
+        Pair<List<List<String>>, List<List<String>>> pairSecondTimeTable = HtmlWorker.getListTransportTable(html,queryLoadTimeDepartmentSecondList, secondStationsCount);
 
 //        System.out.println(html);
     }

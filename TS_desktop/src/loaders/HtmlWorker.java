@@ -2,8 +2,14 @@ package loaders;
 
 import database.DbHelper;
 import models.Bus;
+import models.Pair;
 import models.Station;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HtmlWorker {
@@ -17,7 +23,7 @@ public class HtmlWorker {
     // этом случае идёт проверка на существование
     // если есть - возвращается ид и с ним таким же образом
     // производится запист в таблицу
-    public static void loadBusInfo(
+    public static int loadBusInfo(
             final String query,
             final String html, final Bus bus){
 
@@ -51,6 +57,56 @@ public class HtmlWorker {
                // System.out.println("bsToStId = " + bs_id);
             }
         }
+        return listStations.size();
+    }
+
+    // по детальному урлу загружает информацию об автобусе
+    // а конкретно о дате прибывания на ту или иную старцнию
+    public static Pair<List<List<String>>, List<List<String>>> getListTransportTable(String html,
+                                                                              final String query, int stationsCount){
+        Document doc = Jsoup.parse(html);
+
+        //final String query = "table#table1>tbody>tr>td";
+        Elements list = doc.select(query);
+
+        int index = 0;
+
+        List<List<String>> listTableWorkDay = new ArrayList<>();
+        List<List<String>> listTableHoliday = new ArrayList<>();
+        List<String> listTime = new ArrayList<>();
+
+        boolean isHoliday = false;
+
+        for (Element link : list){
+            String name = link.text();
+
+            if(name.equals("выходные")){
+                isHoliday = true;
+            }
+            else if(name.equals("будни")){
+                isHoliday = false;
+            }
+            if(name.contains(":") && !isHoliday){
+                listTime.add(name); //теккущий одномерный массив расписаний
+                index++;
+                if(index >= stationsCount){ //когда считали все время текуго маршрута
+                    listTableWorkDay.add(listTime); //заносим его в таблицу
+                    listTime = new ArrayList<>(); //обнуляем
+                    index = 0; //и обнуляем счётчик
+                }
+            }
+            else if(name.contains(":") && isHoliday){
+                listTime.add(name);
+                index++;
+                if(index >= stationsCount){
+                    listTableHoliday.add(listTime);
+                    listTime = new ArrayList<>();
+                    index = 0;
+                }
+            }
+        }
+
+        return new Pair<>(listTableWorkDay, listTableHoliday);
 
     }
 }
