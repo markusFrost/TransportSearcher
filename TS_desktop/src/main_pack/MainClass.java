@@ -25,7 +25,7 @@ public class MainClass {
 // добавить в бд и связать остальные объекты
         final String busName = "761";
         final String path = "C:\\Java Projects\\TransportSearcher\\TS_desktop\\src\\utils\\" + busName + ".txt";
-       // loadCurrentBus(path, busName);
+        loadCurrentBus(path, busName);
     }
 
   /*  private static void testConn(){
@@ -69,8 +69,10 @@ public class MainClass {
 
         final String queryLoadTimeDepartmentFirstList = "table#table1>tbody>tr>td";
 
-        Pair<List<List<String>>, List<List<String>>> pairFirstTimeTable = HtmlWorker.getListTransportTable(html,
+        Pair<List<List<Long>>, List<List<Long>>> pairFirstTimeTable = HtmlWorker.getListTransportTable(html,
                 queryLoadTimeDepartmentFirstList, firstStationsCount);
+
+
 
         //--------------------------
 
@@ -79,7 +81,8 @@ public class MainClass {
 
         final String queryLoadTimeDepartmentSecondList = "table#table2>tbody>tr>td";
 
-        Pair<List<List<String>>, List<List<String>>> pairSecondTimeTable = HtmlWorker.getListTransportTable(html,queryLoadTimeDepartmentSecondList, secondStationsCount);
+        Pair<List<List<Long>>, List<List<Long>>> pairSecondTimeTable = HtmlWorker.getListTransportTable(html,
+                queryLoadTimeDepartmentSecondList, secondStationsCount);
 
 //        System.out.println(html);
     }

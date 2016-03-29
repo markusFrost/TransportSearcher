@@ -18,6 +18,46 @@ public class DbHelper {
         return sDbHelper;
     }
 
+    public int addTimeDepatrment(long time){
+        Connection connection = null;
+        Statement statement = null;
+
+        connection = TransportDB.getConnection();
+        try {
+            statement = connection.createStatement();
+
+            int timeId = getTimeDepart(time);
+
+            if (timeId > 0){
+                return timeId;
+            }
+
+            final String query = "insert into TimeDepartment (time_depart) values(" +
+                    time +  ")";
+
+            int affectedRows = statement.executeUpdate(query);
+
+            if (affectedRows == 0) {
+                return -1;
+            }
+
+            try (ResultSet rs = statement.getGeneratedKeys()) {
+                if (rs.next()) {
+                    // System.out.println(rs.getInt(1));
+                    return rs.getInt(1);
+                }
+                rs.close();
+
+            }
+
+
+
+        } catch (Exception e) {
+        }
+
+        return -1;
+    }
+
     public int addBus(Bus item){
         Connection connection = null;
         Statement statement = null;
@@ -245,6 +285,28 @@ public class DbHelper {
     public int getBusByName(String name){
         final String sql = "select * from Bus where name = " +
                 "'" + name + "'";
+
+        Connection connection = null;
+        Statement statement = null;
+
+        connection = TransportDB.getConnection();
+        try {
+            statement = connection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()){
+                return rs.getInt("_id");
+            }
+            rs.close();
+
+        } catch (Exception e) {}
+        return -1;
+
+    }
+
+    public int getTimeDepart(long time){
+        final String sql = "select * from TimeDepartment where time_depart = " + time;
 
         Connection connection = null;
         Statement statement = null;
