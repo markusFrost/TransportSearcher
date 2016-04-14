@@ -106,6 +106,10 @@ public class DbHelper {
 
             statement.executeUpdate(query + "BusStopList");
 
+            statement.executeUpdate(query + "TimeDepartment");
+
+            statement.executeUpdate(query + "StationTimeDepart");
+
         } catch (Exception e) {}
     }
 
@@ -291,7 +295,57 @@ public class DbHelper {
 
     }
 
+    public int addStationTimeDepart(final int timeDepartId, final int busStopId){
+        Connection connection = TransportDB.getConnection();
+        try {
+            Statement statement = connection.createStatement();
 
+            int stationTimeDepartId = getStationTimeDepart(timeDepartId, busStopId);
+
+            if(stationTimeDepartId > 0){
+                return stationTimeDepartId;
+            }
+
+            final String query = "insert into StationTimeDepart (time_depart_id, station_list_id) values(" +
+                    timeDepartId + ", " + busStopId  + ")";
+
+            int affectedRows = statement.executeUpdate(query);
+
+            if (affectedRows == 0) {
+                return -1;
+            }
+
+            try (ResultSet rs = statement.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+                rs.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    private int getStationTimeDepart(int timeDepartId, int busStopId) {
+        final String sql = "select * from StationTimeDepart where station_list_id = " +
+                busStopId + " and " + "time_depart_id = " + timeDepartId;
+
+        Connection connection = TransportDB.getConnection();
+        try {
+            Statement statement = connection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()){
+                return rs.getInt("_id");
+            }
+            rs.close();
+
+        } catch (Exception e) {}
+        return -1;
+    }
 
     public int addRout(final int busId, final int directionType){
         Connection connection = TransportDB.getConnection();

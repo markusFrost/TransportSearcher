@@ -7,12 +7,10 @@ import loaders.InfoLoader;
 import loaders.TimeLoader;
 import models.Bus;
 import models.Pair;
+import models.Station;
 import utils.HelpUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Scanner;
 
 public class MainClass {
     public static void main(String[] args) {
@@ -37,6 +35,8 @@ public class MainClass {
         final String html = HelpUtils.loadHtmlFromFile(pathToLocalFile);
 
         final int DIRECTION_TYPE_ONE = 1;
+        final int WORK_DAY = 1;
+        final int HOLIY_DAY = 2;
 
         final String queryLoadFirstListStations = "table#table1>thead>tr>th>a";
 
@@ -47,73 +47,85 @@ public class MainClass {
         DbHelper dbHelper = DbHelper.getInstance();
         dbHelper.clearTable();
 
-        final int firstStationsCount =
-                BusLoader.loadBusInfo(queryLoadFirstListStations, html, bus, DIRECTION_TYPE_ONE);
+        // ---- LOAD STATIONS ---- //
+        final List<Station> listStations =
+                BusLoader.loadStations(html, queryLoadFirstListStations);
+
+        final int firstStationsCount = listStations.size();
 
         final String queryLoadTimeDepartmentFirstList = "table#table1>tbody>tr>td";
 
+        // --- LOAD TIME DEPARTMENT ---- //
         Pair<List<List<Long>>, List<List<Long>>> pairFirstTimeTable = HtmlWorker.getListTransportTable(html,
                 queryLoadTimeDepartmentFirstList, firstStationsCount);
 
         List<List<Long>> listTableWorkDay =
                 pairFirstTimeTable.getListTableWorkDay();
 
-        TimeLoader.loadTimeInfo(listTableWorkDay);
+        List<List<Long>> listTableHolyDay =
+                pairFirstTimeTable.getListTableHoliday();
+
+        // --- LOAD IDS OF BUS TO STATIONS SEQUANCE --- //
+        List<Integer> listBusStopIds = BusLoader.loadBusInfo(bus, listStations, DIRECTION_TYPE_ONE);
+
+        TimeLoader.loadTimeInfo(listTableWorkDay, listBusStopIds, WORK_DAY);
+
+        TimeLoader.loadTimeInfo(listTableHolyDay, listBusStopIds, HOLIY_DAY);
 
         bus.getName();
 
     }
 
 
-    private static void loadCurrentBus(final String path, final String busName){
-
-      /*  final String busName = "761";
-        final String url = "http://mybuses.ru/moscow/bus/" + busName  + "/";
-
-        InfoLoader infoLoader = InfoLoader.getInstance();*/
-
-        String html = "";
-        //html = infoLoader.getHtmlCodyByUrl(url);
-
-        try {
-            html = new Scanner(new File(path)).useDelimiter("\\Z").next();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-
-        final String queryLoadFirstListStations = "table#table1>thead>tr>th>a";
-
-        Bus bus = new Bus();
-        bus.setUrl("url");
-        bus.setName(busName);
-
-        DbHelper dbHelper = DbHelper.getInstance();
-        dbHelper.clearTable(); //это пока тестовое - очищаем до этого все что было
-
-
-
-        final int firstStationsCount = BusLoader.loadBusInfo(queryLoadFirstListStations, html, bus, 2);
-
-        final String queryLoadTimeDepartmentFirstList = "table#table1>tbody>tr>td";
-
-        Pair<List<List<Long>>, List<List<Long>>> pairFirstTimeTable = HtmlWorker.getListTransportTable(html,
-                queryLoadTimeDepartmentFirstList, firstStationsCount);
-
-
-
-        //--------------------------
-
-        final String queryLoadSecondListStations = "table#table2>thead>tr>th>a";
-        final int secondStationsCount = BusLoader.loadBusInfo(queryLoadSecondListStations, html, bus, 2);
-
-        final String queryLoadTimeDepartmentSecondList = "table#table2>tbody>tr>td";
-
-        Pair<List<List<Long>>, List<List<Long>>> pairSecondTimeTable = HtmlWorker.getListTransportTable(html,
-                queryLoadTimeDepartmentSecondList, secondStationsCount);
-
-//        System.out.println(html);
-    }
+//    private static void loadCurrentBus(final String path, final String busName){
+//
+//      /*  final String busName = "761";
+//        final String url = "http://mybuses.ru/moscow/bus/" + busName  + "/";
+//
+//        InfoLoader infoLoader = InfoLoader.getInstance();*/
+//
+//        String html = "";
+//        //html = infoLoader.getHtmlCodyByUrl(url);
+//
+//        try {
+//            html = new Scanner(new File(path)).useDelimiter("\\Z").next();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//        final String queryLoadFirstListStations = "table#table1>thead>tr>th>a";
+//
+//        Bus bus = new Bus();
+//        bus.setUrl("url");
+//        bus.setName(busName);
+//
+//        DbHelper dbHelper = DbHelper.getInstance();
+//        dbHelper.clearTable(); //это пока тестовое - очищаем до этого все что было
+//
+//
+//
+//        final int firstStationsCount = BusLoader.loadBusInfo(queryLoadFirstListStations, html, bus, 2);
+//
+//        final String queryLoadTimeDepartmentFirstList = "table#table1>tbody>tr>td";
+//
+//        Pair<List<List<Long>>, List<List<Long>>> pairFirstTimeTable = HtmlWorker.getListTransportTable(html,
+//                queryLoadTimeDepartmentFirstList, firstStationsCount);
+//
+//
+//
+//        //--------------------------
+//
+//        final String queryLoadSecondListStations = "table#table2>thead>tr>th>a";
+//        final int secondStationsCount = BusLoader.loadBusInfo(queryLoadSecondListStations, html, bus, 2);
+//
+//        final String queryLoadTimeDepartmentSecondList = "table#table2>tbody>tr>td";
+//
+//        Pair<List<List<Long>>, List<List<Long>>> pairSecondTimeTable = HtmlWorker.getListTransportTable(html,
+//                queryLoadTimeDepartmentSecondList, secondStationsCount);
+//
+////        System.out.println(html);
+//    }
 
     private static List<Bus> loadAllBuses() {
         final String url = "http://mybuses.ru/moscow/";

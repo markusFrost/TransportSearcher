@@ -65,4 +65,9 @@ public class SaveDbHelper {
         DbHelper dbHelper = DbHelper.getInstance();
         return dbHelper.addTimeDepatrment(timeDepart, dayType);
     }
+
+    public static int fillStationTimeDepartTable(int busStopId, int timeDepartId) {
+        DbHelper dbHelper = DbHelper.getInstance();
+        return dbHelper.addStationTimeDepart(timeDepartId, busStopId);
+    }
 }

@@ -7,13 +7,10 @@ import models.Station;
 import java.util.List;
 
 public class BusLoader {
-    public static int loadBusInfo(
-            final String query,
-            final String html, final Bus bus, int directionType){
-
-        InfoLoader infoLoader = InfoLoader.getInstance();
-
-        List<Station> listStations = infoLoader.getListStations(html, query);
+    public static List<Integer> loadBusInfo(
+            final Bus bus,
+            final List<Station> listStations,
+            int directionType){
 
         int busId = SaveDbHelper.fillBusTable(bus);
 
@@ -28,6 +25,16 @@ public class BusLoader {
         List<Integer> listBusStopIds =
                 SaveDbHelper.fillBusStopListTable(listBusToStationIds, routeId);
 
-        return listStations.size();
+        return listBusStopIds;
+    }
+
+    public static List<Station> loadStations(
+            final String html,
+            final String query){
+        InfoLoader infoLoader = InfoLoader.getInstance();
+
+        List<Station> listStations = infoLoader.getListStations(html, query);
+
+        return listStations;
     }
 }
