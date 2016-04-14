@@ -1,6 +1,5 @@
 package main_pack;
 
-import database.DbHelper;
 import loaders.BusLoader;
 import loaders.HtmlWorker;
 import loaders.InfoLoader;
@@ -14,19 +13,22 @@ import java.util.List;
 
 public class MainClass {
     public static void main(String[] args) {
-        final String busName = "761";
+        final String busName = "245";
         final String path = "C:\\Users\\andrey.vystavkin\\Documents\\" +
                 "GitProjects\\TS_desktop\\src\\utils\\" + busName + ".txt";
         //loadBusInOneDirection(path, busName);
 
+        //DbHelper dbHelper = DbHelper.getInstance();
+        //dbHelper.clearTable();
 
-        long time1 = System.currentTimeMillis();
+       long time1 = System.currentTimeMillis();
         loadBusInOneDirection(path, busName);
+        loadBusInSecondDirection(path, busName);
         long time2 = System.currentTimeMillis();
         System.out.println((time2 - time1)/1000);
 
 
-       /* String str = "1:02";
+       /* String str = "14:35";
 
         long time = HelpUtils.convertStringToLong(str);
 
@@ -57,8 +59,8 @@ public class MainClass {
         bus.setUrl("url");
         bus.setName(busName);
 
-        DbHelper dbHelper = DbHelper.getInstance();
-        dbHelper.clearTable();
+        //DbHelper dbHelper = DbHelper.getInstance();
+        //dbHelper.clearTable();
 
         // ---- LOAD STATIONS ---- //
         final List<Station> listStations =
@@ -84,10 +86,47 @@ public class MainClass {
         TimeLoader.loadTimeInfo(listTableWorkDay, listBusStopIds, WORK_DAY);
 
         TimeLoader.loadTimeInfo(listTableHolyDay, listBusStopIds, HOLIY_DAY);
-
-        bus.getName();
-
     }
+
+    private static void loadBusInSecondDirection(final String pathToLocalFile, final String busName){
+        final String html = HelpUtils.loadHtmlFromFile(pathToLocalFile);
+
+        final int DIRECTION_TYPE_TWO = 2;
+        final int WORK_DAY = 1;
+        final int HOLIY_DAY = 2;
+
+        final String queryLoadFirstListStations = "table#table2>thead>tr>th>a";
+
+        Bus bus = new Bus();
+        bus.setUrl("url");
+        bus.setName(busName);
+
+        // ---- LOAD STATIONS ---- //
+        final List<Station> listStations =
+                BusLoader.loadStations(html, queryLoadFirstListStations);
+
+        final int firstStationsCount = listStations.size();
+
+        final String queryLoadTimeDepartmentFirstList = "table#table2>tbody>tr>td";
+
+        // --- LOAD TIME DEPARTMENT ---- //
+        Pair<List<List<Long>>, List<List<Long>>> pairFirstTimeTable = HtmlWorker.getListTransportTable(html,
+                queryLoadTimeDepartmentFirstList, firstStationsCount);
+
+        List<List<Long>> listTableWorkDay =
+                pairFirstTimeTable.getListTableWorkDay();
+
+        List<List<Long>> listTableHolyDay =
+                pairFirstTimeTable.getListTableHoliday();
+
+        // --- LOAD IDS OF BUS TO STATIONS SEQUANCE --- //
+        List<Integer> listBusStopIds = BusLoader.loadBusInfo(bus, listStations, DIRECTION_TYPE_TWO);
+
+        TimeLoader.loadTimeInfo(listTableWorkDay, listBusStopIds, WORK_DAY);
+
+        TimeLoader.loadTimeInfo(listTableHolyDay, listBusStopIds, HOLIY_DAY);
+    }
+
 
 
 //    private static void loadCurrentBus(final String path, final String busName){
