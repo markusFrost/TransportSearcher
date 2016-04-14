@@ -17,7 +17,20 @@ public class MainClass {
         final String busName = "761";
         final String path = "C:\\Users\\andrey.vystavkin\\Documents\\" +
                 "GitProjects\\TS_desktop\\src\\utils\\" + busName + ".txt";
+        //loadBusInOneDirection(path, busName);
+
+
+        long time1 = System.currentTimeMillis();
         loadBusInOneDirection(path, busName);
+        long time2 = System.currentTimeMillis();
+        System.out.println((time2 - time1)/1000);
+
+
+       /* String str = "1:02";
+
+        long time = HelpUtils.convertStringToLong(str);
+
+        System.out.println(time);*/
     }
 
   /*  private static void testConn(){
