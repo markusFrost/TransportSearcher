@@ -1,6 +1,6 @@
 package loaders;
 
-import database.DbHelper;
+import database.SaveDbHelper;
 import models.Bus;
 import models.Pair;
 import models.Station;
@@ -23,17 +23,14 @@ public class HtmlWorker {
 
         List<Station> listStations = infoLoader.getListStations(html, query);
 
-        DbHelper dbHelper = DbHelper.getInstance();
+        int busId = SaveDbHelper.fillBusTable(bus);
 
-        int busId = dbHelper.addBus(bus);
+        List<Integer> listStationsIds =
+                SaveDbHelper.fillStationTable(listStations);
 
-        for (Station station : listStations) {
-            int stationId =   dbHelper.addStation(station);
+        List<Integer> listBusToStationIds =
+                SaveDbHelper.fillBusToStationTable(busId, listStationsIds);
 
-            if(busId > 0 && stationId > 0) {
-                int bs_id = dbHelper.addBusToStation(busId, stationId);
-            }
-        }
         return listStations.size();
     }
 

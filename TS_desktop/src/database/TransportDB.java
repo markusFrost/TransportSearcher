@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 
 public class TransportDB {
     private static Connection sConnection;
-    private static final String dbPath = "C:\\Java Projects\\TransportSearcher\\db\\Transport.db";
+    private static final String dbPath = "C:\\Users\\andrey.vystavkin\\Documents\\GitProjects\\db\\Transport.db";
 
     public static Connection getConnection(){
         if (sConnection == null){

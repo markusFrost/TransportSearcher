@@ -59,15 +59,11 @@ public class DbHelper {
     }
 
     public int addBus(Bus item){
-        Connection connection = null;
-        Statement statement = null;
-
-        connection = TransportDB.getConnection();
+        Connection connection = TransportDB.getConnection();
         try {
-            statement = connection.createStatement();
+            Statement statement = connection.createStatement();
 
             final int busId = getBusByName(item.getName());
-            //проверём мб такой автобус уже существует
             if(busId > 0){
                 return busId;
             }
@@ -83,18 +79,12 @@ public class DbHelper {
 
             try (ResultSet rs = statement.getGeneratedKeys()) {
                 if (rs.next()) {
-                   // System.out.println(rs.getInt(1));
                     return rs.getInt(1);
                 }
                 rs.close();
 
             }
-
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
 
         return -1;
     }
@@ -115,57 +105,15 @@ public class DbHelper {
 
             statement.executeUpdate(query + "BusToStation");
 
-            statement.executeUpdate(query + "BusToStationInfo");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        } catch (Exception e) {}
     }
 
-    public int addBusToStationInfo(int bsId, int weight, int dayType){
-        Connection connection = null;
-        Statement statement = null;
-
-        connection = TransportDB.getConnection();
-        try {
-            statement = connection.createStatement();
-
-            final String query = "insert into BusToStationInfo (bus_to_station_id, weight, day_type) values(" +
-                    bsId + ", " + weight  + ", " + dayType + ")";
-
-            int affectedRows = statement.executeUpdate(query);
-
-            if (affectedRows == 0) {
-                return -1;
-            }
-
-            try (ResultSet rs = statement.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-                rs.close();
-
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
-
-    /*
-    Дело в том что автобус может останавливаться на этой останвоке как в одном направлении так и в другм
-    Поэтому лучше зранить один ид а в даьнеёшем к нему обращаться
-     */
 
     public int addBusToStation(int busId, int stationId){
-        Connection connection = null;
-        Statement statement = null;
+        Connection connection = TransportDB.getConnection();
 
-        connection = TransportDB.getConnection();
         try {
-            statement = connection.createStatement();
+            Statement statement = connection.createStatement();
 
             int bsId = getBusToStationId(busId, stationId);
 
@@ -190,9 +138,7 @@ public class DbHelper {
 
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
         return -1;
     }
 
