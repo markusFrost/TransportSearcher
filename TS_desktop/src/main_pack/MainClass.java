@@ -5,6 +5,7 @@ import loaders.HtmlWorker;
 import loaders.InfoLoader;
 import models.Bus;
 import models.Pair;
+import utils.HelpUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,13 +14,10 @@ import java.util.Scanner;
 
 public class MainClass {
     public static void main(String[] args) {
-        System.out.println("Hello");
-
-       // testConn();
-// добавить в бд и связать остальные объекты
         final String busName = "761";
-        final String path = "C:\\Users\\andrey.vystavkin\\Documents\\GitProjects\\TS_desktop\\src\\utils\\" + busName + ".txt";
-        loadCurrentBus(path, busName);
+        final String path = "C:\\Users\\andrey.vystavkin\\Documents\\" +
+                "GitProjects\\TS_desktop\\src\\utils\\" + busName + ".txt";
+        loadBusInOneDirection(path, busName);
     }
 
   /*  private static void testConn(){
@@ -32,6 +30,24 @@ public class MainClass {
 
         dbHelper.addBus(bus);
     }*/
+
+    private static void loadBusInOneDirection(final String pathToLocalFile, final String busName){
+        final String html = HelpUtils.loadHtmlFromFile(pathToLocalFile);
+
+        final String queryLoadFirstListStations = "table#table1>thead>tr>th>a";
+
+        Bus bus = new Bus();
+        bus.setUrl("url");
+        bus.setName(busName);
+
+        DbHelper dbHelper = DbHelper.getInstance();
+        dbHelper.clearTable();
+
+        final int firstStationsCount =
+                HtmlWorker.loadBusInfo(queryLoadFirstListStations, html, bus);
+
+    }
+
 
     private static void loadCurrentBus(final String path, final String busName){
 
@@ -59,7 +75,7 @@ public class MainClass {
         DbHelper dbHelper = DbHelper.getInstance();
         dbHelper.clearTable(); //это пока тестовое - очищаем до этого все что было
 
-        
+
 
         final int firstStationsCount = HtmlWorker.loadBusInfo(queryLoadFirstListStations, html, bus);
 
