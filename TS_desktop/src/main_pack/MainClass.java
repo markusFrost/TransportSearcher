@@ -1,8 +1,10 @@
 package main_pack;
 
 import database.DbHelper;
+import loaders.BusLoader;
 import loaders.HtmlWorker;
 import loaders.InfoLoader;
+import loaders.TimeLoader;
 import models.Bus;
 import models.Pair;
 import utils.HelpUtils;
@@ -34,6 +36,8 @@ public class MainClass {
     private static void loadBusInOneDirection(final String pathToLocalFile, final String busName){
         final String html = HelpUtils.loadHtmlFromFile(pathToLocalFile);
 
+        final int DIRECTION_TYPE_ONE = 1;
+
         final String queryLoadFirstListStations = "table#table1>thead>tr>th>a";
 
         Bus bus = new Bus();
@@ -44,7 +48,19 @@ public class MainClass {
         dbHelper.clearTable();
 
         final int firstStationsCount =
-                HtmlWorker.loadBusInfo(queryLoadFirstListStations, html, bus);
+                BusLoader.loadBusInfo(queryLoadFirstListStations, html, bus, DIRECTION_TYPE_ONE);
+
+        final String queryLoadTimeDepartmentFirstList = "table#table1>tbody>tr>td";
+
+        Pair<List<List<Long>>, List<List<Long>>> pairFirstTimeTable = HtmlWorker.getListTransportTable(html,
+                queryLoadTimeDepartmentFirstList, firstStationsCount);
+
+        List<List<Long>> listTableWorkDay =
+                pairFirstTimeTable.getListTableWorkDay();
+
+        TimeLoader.loadTimeInfo(listTableWorkDay);
+
+        bus.getName();
 
     }
 
@@ -77,7 +93,7 @@ public class MainClass {
 
 
 
-        final int firstStationsCount = HtmlWorker.loadBusInfo(queryLoadFirstListStations, html, bus);
+        final int firstStationsCount = BusLoader.loadBusInfo(queryLoadFirstListStations, html, bus, 2);
 
         final String queryLoadTimeDepartmentFirstList = "table#table1>tbody>tr>td";
 
@@ -89,7 +105,7 @@ public class MainClass {
         //--------------------------
 
         final String queryLoadSecondListStations = "table#table2>thead>tr>th>a";
-        final int secondStationsCount = HtmlWorker.loadBusInfo(queryLoadSecondListStations, html, bus);
+        final int secondStationsCount = BusLoader.loadBusInfo(queryLoadSecondListStations, html, bus, 2);
 
         final String queryLoadTimeDepartmentSecondList = "table#table2>tbody>tr>td";
 

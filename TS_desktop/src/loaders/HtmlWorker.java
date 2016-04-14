@@ -1,9 +1,6 @@
 package loaders;
 
-import database.SaveDbHelper;
-import models.Bus;
 import models.Pair;
-import models.Station;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,24 +12,6 @@ import java.util.List;
 
 public class HtmlWorker {
 
-    public static int loadBusInfo(
-            final String query,
-            final String html, final Bus bus){
-
-        InfoLoader infoLoader = InfoLoader.getInstance();
-
-        List<Station> listStations = infoLoader.getListStations(html, query);
-
-        int busId = SaveDbHelper.fillBusTable(bus);
-
-        List<Integer> listStationsIds =
-                SaveDbHelper.fillStationTable(listStations);
-
-        List<Integer> listBusToStationIds =
-                SaveDbHelper.fillBusToStationTable(busId, listStationsIds);
-
-        return listStations.size();
-    }
 
     // по детальному урлу загружает информацию об автобусе
     // а конкретно о дате прибывания на ту или иную старцнию

@@ -1,19 +1,19 @@
 package models;
 
 public class Pair<U,V> {
-    private U mItem1;
-    private V mItem2;
+    private U mListTableWorkDay;
+    private V mListTableHoliday;
 
     public Pair(U item1, V item2) {
-        mItem1 = item1;
-        mItem2 = item2;
+        mListTableWorkDay = item1;
+        mListTableHoliday = item2;
     }
 
-    public U getItem1() {
-        return mItem1;
+    public U getListTableWorkDay() {
+        return mListTableWorkDay;
     }
 
-    public V getItem2() {
-        return mItem2;
+    public V getListTableHoliday() {
+        return mListTableHoliday;
     }
 }

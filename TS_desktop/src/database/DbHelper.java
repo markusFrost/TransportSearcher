@@ -18,22 +18,19 @@ public class DbHelper {
         return sDbHelper;
     }
 
-    public int addTimeDepatrment(long time){
-        Connection connection = null;
-        Statement statement = null;
-
-        connection = TransportDB.getConnection();
+    public int addTimeDepatrment(long time, int dayType){
+        Connection connection = TransportDB.getConnection();
         try {
-            statement = connection.createStatement();
+            Statement statement = connection.createStatement();
 
-            int timeId = getTimeDepart(time);
+            int timeId = getTimeDepart(time, dayType);
 
             if (timeId > 0){
                 return timeId;
             }
 
-            final String query = "insert into TimeDepartment (time_depart) values(" +
-                    time +  ")";
+            final String query = "insert into TimeDepartment (time_depart, day_type) values(" +
+                    time + " , " + dayType +  ")";
 
             int affectedRows = statement.executeUpdate(query);
 
@@ -104,6 +101,10 @@ public class DbHelper {
             statement.executeUpdate(query + "Bus");
 
             statement.executeUpdate(query + "BusToStation");
+
+            statement.executeUpdate(query + "Rout");
+
+            statement.executeUpdate(query + "BusStopList");
 
         } catch (Exception e) {}
     }
@@ -228,6 +229,25 @@ public class DbHelper {
 
     }
 
+    private int getRoutByBusIdAndDirectionType(int busId, int direstionType) {
+        final String sql = "select * from Rout where bus_id = " +
+                busId + " and " + "direction_type = " + direstionType;
+
+        Connection connection = TransportDB.getConnection();
+        try {
+            Statement statement = connection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()){
+                return rs.getInt("_id");
+            }
+            rs.close();
+
+        } catch (Exception e) {}
+        return -1;
+    }
+
     public int getBusByName(String name){
         final String sql = "select * from Bus where name = " +
                 "'" + name + "'";
@@ -251,15 +271,13 @@ public class DbHelper {
 
     }
 
-    public int getTimeDepart(long time){
-        final String sql = "select * from TimeDepartment where time_depart = " + time;
+    public int getTimeDepart(long time, int dayType){
+        final String sql = "select * from TimeDepartment where time_depart = " + time +
+                " and day_type = " + dayType;
 
-        Connection connection = null;
-        Statement statement = null;
-
-        connection = TransportDB.getConnection();
+        Connection connection = TransportDB.getConnection();
         try {
-            statement = connection.createStatement();
+            Statement statement = connection.createStatement();
 
             ResultSet rs = statement.executeQuery(sql);
 
@@ -271,5 +289,94 @@ public class DbHelper {
         } catch (Exception e) {}
         return -1;
 
+    }
+
+
+
+    public int addRout(final int busId, final int directionType){
+        Connection connection = TransportDB.getConnection();
+        try {
+            Statement statement = connection.createStatement();
+
+            int routId = getRoutByBusIdAndDirectionType(busId, directionType);
+
+            if(routId > 0){
+                return routId;
+            }
+
+            final String query = "insert into Rout (bus_id, direction_type) values(" +
+                    busId + ", " + directionType  + ")";
+
+            int affectedRows = statement.executeUpdate(query);
+
+            if (affectedRows == 0) {
+                return -1;
+            }
+
+            try (ResultSet rs = statement.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+                rs.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+
+    public int addBusStop(int busToStationId, int routId, int stationWeight) {
+        Connection connection = TransportDB.getConnection();
+        try {
+            Statement statement = connection.createStatement();
+
+            int busStopId = getBusStop(busToStationId, routId, stationWeight);
+
+            if(busStopId > 0){
+                return busStopId;
+            }
+
+            final String query = "insert into BusStopList (bus_to_station_id, rout_id, weight) values(" +
+                    busToStationId + ", " + routId  + ", " + stationWeight +  ")";
+
+            int affectedRows = statement.executeUpdate(query);
+
+            if (affectedRows == 0) {
+                return -1;
+            }
+
+            try (ResultSet rs = statement.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+                rs.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    private int getBusStop(int busToStationId, int routId, int stationWeight) {
+        final String sql = "select * from BusStopList where bus_to_station_id = " +
+                busToStationId + " and " + "rout_id = " + routId +
+                " and " + "weight = " + stationWeight;
+
+        Connection connection = TransportDB.getConnection();
+        try {
+            Statement statement = connection.createStatement();
+
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()){
+                return rs.getInt("_id");
+            }
+            rs.close();
+
+        } catch (Exception e) {}
+        return -1;
     }
 }

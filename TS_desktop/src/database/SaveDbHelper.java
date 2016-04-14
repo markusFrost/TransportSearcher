@@ -41,4 +41,28 @@ public class SaveDbHelper {
         return listStationsIds;
     }
 
+    public static int fillRoutTable(int busId, int directionType) {
+        DbHelper dbHelper = DbHelper.getInstance();
+        return dbHelper.addRout(busId, directionType);
+    }
+
+    public static List<Integer> fillBusStopListTable(List<Integer> listBusToStationIds, int routId) {
+        List<Integer> listBusStopIds = new ArrayList<>();
+
+        int stationWeight = 1;
+
+        DbHelper dbHelper = DbHelper.getInstance();
+
+        for (int busToStationId : listBusToStationIds) {
+            int busStopId = dbHelper.addBusStop(busToStationId, routId, stationWeight);
+            listBusStopIds.add(busStopId);
+            stationWeight++;
+        }
+        return listBusStopIds;
+    }
+
+    public static int fillTimeDepartmentTable(Long timeDepart, int dayType) {
+        DbHelper dbHelper = DbHelper.getInstance();
+        return dbHelper.addTimeDepatrment(timeDepart, dayType);
+    }
 }
