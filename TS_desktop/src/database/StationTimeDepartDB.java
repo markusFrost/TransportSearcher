@@ -65,7 +65,7 @@ public class StationTimeDepartDB {
 
             ResultSet rs = statement.executeQuery(sql);
 
-            if (rs.next()) {
+            while (rs.next()) {
                 String busName = rs.getString("bus_name");
                 listBusNames.add(busName);
             }

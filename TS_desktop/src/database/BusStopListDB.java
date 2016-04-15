@@ -50,7 +50,7 @@ public class BusStopListDB {
                     weightCalculator.calcWeightForOutStation(busToStationOutId, routId);
 
             if(stationInWeight < stationOutWeight
-                    && stationInWeight != stationOutWeight){
+                    && stationInWeight >  0 && stationOutWeight > 0 ){
                return weightCalculator.getBusStopInId();
             }
         }

@@ -19,7 +19,7 @@ public class HelpUtils {
         final String strTime2  = "14:35";
 
         final String stationInName = "Педагогическая ул.";
-        final String stationOutName = "Метро \"Царицыно\"";
+        final String stationOutName = "Ст. переливания крови";
 
         final long time1 = HelpUtils.convertStringToLong(strTime1);
         final long time2 = HelpUtils.convertStringToLong(strTime2);
