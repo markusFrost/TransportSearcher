@@ -1,13 +1,61 @@
 package utils;
 
+import database.BusStopListDB;
+import database.DbHelper;
+import database.StationTimeDepartDB;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HelpUtils {
+
+    public static void  testQuery(){
+        final String strTime1 = "13:25";
+        final String strTime2  = "14:35";
+
+        final String stationInName = "Педагогическая ул.";
+        final String stationOutName = "Метро \"Царицыно\"";
+
+        final long time1 = HelpUtils.convertStringToLong(strTime1);
+        final long time2 = HelpUtils.convertStringToLong(strTime2);
+        final int dayType = 1;
+
+        DbHelper dbHelper = DbHelper.getInstance();
+
+        // LOAD TIME IDS
+        List<Integer> listTimeDepartIds =
+                dbHelper.getTimeDepartSegment(time1, time2, dayType);
+
+        // LOAD BUS IDS
+        final int stationInId = dbHelper.getStationByName(stationInName);
+        final int stationOutId = dbHelper.getStationByName(stationOutName);
+
+        List<Integer> listBusIds =
+                dbHelper.getBusesByStationsIds(stationInId, stationOutId);
+
+        //LOAD ROUTS IDS
+        List<Integer> listRoutIds =
+                dbHelper.getRoutsByBusIds(listBusIds);
+
+        //LOAD LIST BUS STOP IDS
+        BusStopListDB busStopListDB = BusStopListDB.getInstance();
+        List<Integer> listBusStopIds =
+                busStopListDB.getBusStopListIds(listBusIds, stationInId, stationOutId);
+
+
+        // LOAD BUS NAMES WHICH COME IN THE TIME SEGMENT
+        StationTimeDepartDB stationTimeDepartDB = StationTimeDepartDB.getInstance();
+
+        List<String> listBusNameDriveInTime =
+                stationTimeDepartDB.getListBusNameDriveInTime(listBusStopIds, listTimeDepartIds);
+
+        listTimeDepartIds.size();
+    }
 
     public static String loadHtmlFromFile(String pathToLocalFile){
         String html = "";

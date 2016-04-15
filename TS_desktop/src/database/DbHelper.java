@@ -6,6 +6,8 @@ import models.Station;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DbHelper {
     private static DbHelper sDbHelper;
@@ -433,4 +435,96 @@ public class DbHelper {
         } catch (Exception e) {}
         return -1;
     }
+
+    public List<Integer> getTimeDepartSegment(long time1, long time2, int day_type) {
+        List<Integer> listTimeDepartId = new ArrayList<>();
+        String sql = String.format("select _id from TimeDepartment where \n" +
+                "time_depart between %d and %d\n" +
+                "and day_type = %d", time1, time2, day_type);
+
+        Connection connection = TransportDB.getConnection();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()){
+                int timeDepartId = rs.getInt("_id");
+                listTimeDepartId.add(timeDepartId);
+            }
+            rs.close();
+        } catch (Exception e) {}
+        return listTimeDepartId;
+    }
+
+    public List<Integer> getBusesByStationsIds(int stationInId, int stationOutId) {
+        List<Integer> listBusIds = new ArrayList<>();
+        String sql = String.format("select DISTINCT Bus._id  from BusToStation, Bus where \n" +
+                "BusToStation.station_id in (%d, %d) ", stationInId, stationOutId);
+
+        Connection connection = TransportDB.getConnection();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()){
+                int timeDepartId = rs.getInt("_id");
+                listBusIds.add(timeDepartId);
+            }
+            rs.close();
+        } catch (Exception e) {}
+        return listBusIds;
+    }
+
+    public List<Integer> getRoutsByBusIds(List<Integer> listBusIds) {
+        List<Integer> listRoutIds = new ArrayList<>();
+        String sql = "";
+        ResultSet rs = null;
+
+        Connection connection = TransportDB.getConnection();
+        try {
+            Statement statement = connection.createStatement();
+
+            for (int busId : listBusIds){
+                sql = String.format(
+                        "select _id from Rout where bus_id = %d", busId);
+                rs = statement.executeQuery(sql);
+
+                while (rs.next()){
+                    int routId = rs.getInt("_id");
+                    listRoutIds.add(routId);
+                }
+                rs.close();
+            }
+
+        } catch (Exception e) {}
+        return listRoutIds;
+    }
+
+    public List<Integer> getRoutsByBuId(int busId) {
+        List<Integer> listRoutIds = new ArrayList<>();
+        String sql = "";
+        ResultSet rs = null;
+
+        Connection connection = TransportDB.getConnection();
+        try {
+            Statement statement = connection.createStatement();
+
+                sql = String.format(
+                        "select _id from Rout where bus_id = %d", busId);
+                rs = statement.executeQuery(sql);
+
+                while (rs.next()){
+                    int routId = rs.getInt("_id");
+                    listRoutIds.add(routId);
+                }
+                rs.close();
+
+        } catch (Exception e) {}
+        return listRoutIds;
+    }
+
+
+
+
+
 }

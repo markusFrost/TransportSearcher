@@ -21,11 +21,13 @@ public class MainClass {
         //DbHelper dbHelper = DbHelper.getInstance();
         //dbHelper.clearTable();
 
-       long time1 = System.currentTimeMillis();
+      /* long time1 = System.currentTimeMillis();
         loadBusInOneDirection(path, busName);
         loadBusInSecondDirection(path, busName);
         long time2 = System.currentTimeMillis();
-        System.out.println((time2 - time1)/1000);
+        System.out.println((time2 - time1)/1000);*/
+
+        HelpUtils.testQuery();
 
 
        /* String str = "14:35";
