@@ -1,5 +1,6 @@
 package loaders;
 
+import models.Bus;
 import models.Pair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -60,7 +61,30 @@ public class HtmlWorker {
         }
 
         return new Pair<>(listTableWorkDay, listTableHoliday);
+    }
 
+    public static List<Bus> getListBuses(String html){
+
+        List<Bus> listBuses = new ArrayList<>();
+        Bus bus = null;
+
+        final String query = "div.list-group>a.list-group-item";
+
+        Document doc = Jsoup.parse(html);
+
+        Elements array = doc.select(query);
+
+        for (Element link : array){
+            bus = new Bus();
+
+            bus.setName(link.text());
+            bus.setUrl(
+                    HelpUtils.changeUrl(link.attr("href") ));
+
+            listBuses.add(bus);
+        }
+
+        return listBuses;
     }
 }
 

@@ -3,6 +3,8 @@ package utils;
 import database.BusStopListDB;
 import database.DbHelper;
 import database.StationTimeDepartDB;
+import loaders.BusesNamesLoader;
+import models.Bus;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,15 +23,15 @@ public class HelpUtils {
         final String stationInName = "Педагогическая ул.";
         final String stationOutName = "Ст. переливания крови";
 
-        final long time1 = HelpUtils.convertStringToLong(strTime1);
-        final long time2 = HelpUtils.convertStringToLong(strTime2);
+        final long timeMin = HelpUtils.convertStringToLong(strTime1);
+        final long timeMax = HelpUtils.convertStringToLong(strTime2);
         final int dayType = 1;
 
         DbHelper dbHelper = DbHelper.getInstance();
 
         // LOAD TIME IDS
         List<Integer> listTimeDepartIds =
-                dbHelper.getTimeDepartSegment(time1, time2, dayType);
+                dbHelper.getTimeDepartSegment(timeMin, timeMax, dayType);
 
         // LOAD BUS IDS
         final int stationInId = dbHelper.getStationByName(stationInName);
@@ -64,9 +66,23 @@ public class HelpUtils {
         } catch (FileNotFoundException e) {}
         return html;
     }
-    public static String changeUrl(String mainUrl, String url){
-        String value = mainUrl + url.replace("moscow/", "");
+    public static String changeUrl(String url){
+        String value = BusesNamesLoader.MAIN_URL + url.replace("moscow/", "");
         return value.replace("//", "/" );
+    }
+
+    public static String convertBusName(Bus bus){
+        final String busName = bus.getName();
+
+        String reg = "[\\d\\w]+";
+        Pattern p = Pattern.compile( reg );
+        Matcher m = p.matcher(busName);
+
+        if(m.find()){
+            return m.group();
+        }
+        return "NONE";
+
     }
 
     public static long convertStringToLong(String timeString){

@@ -1,13 +1,10 @@
 package loaders;
 
-import models.Bus;
-import models.Pair;
 import models.Station;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import utils.HelpUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -27,7 +24,7 @@ public class InfoLoader {
         return sInfoLoader;
     }
 
-    public String getHtmlCodyByUrl(String url){
+    public String getHtmlCodeByUrl(String url){
 
         StringBuilder sb = new StringBuilder();
 
@@ -44,9 +41,13 @@ public class InfoLoader {
 
             in.close();
 
-        }catch (Exception e){}
+        }catch (Exception e){
+            e.getMessage();
+        }
 
-        return sb.toString();
+        String html = sb.toString();
+
+        return html;
     }
 
 
@@ -69,31 +70,4 @@ public class InfoLoader {
 
         return listStations;
     }
-
-    public List<Bus> getListBuses(String html, String url){
-
-        List<Bus> listBuses = new ArrayList<>();
-        Bus bus = null;
-
-        final String query = "div.list-group>a.list-group-item";
-
-        Document doc = Jsoup.parse(html);
-
-        Elements array = doc.select(query);
-
-        for (Element link : array){
-            bus = new Bus();
-
-            bus.setName(link.text());
-            bus.setUrl(
-                    HelpUtils.changeUrl(url, link.attr("href") ));
-
-            listBuses.add(bus);
-        }
-
-        return listBuses;
-
-    }
-
-
 }

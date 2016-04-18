@@ -1,9 +1,7 @@
 package main_pack;
 
-import loaders.BusLoader;
-import loaders.HtmlWorker;
-import loaders.InfoLoader;
-import loaders.TimeLoader;
+import database.DbHelper;
+import loaders.*;
 import models.Bus;
 import models.Pair;
 import models.Station;
@@ -27,7 +25,43 @@ public class MainClass {
         long time2 = System.currentTimeMillis();
         System.out.println((time2 - time1)/1000);*/
 
-        HelpUtils.testQuery();
+       // HelpUtils.testQuery();
+
+
+
+        /*
+        1 Сначала нужно получить хтмл главной старницы
+        и потом его закешировать
+
+        2 из кешированной версии доставть массив автобусов и закешировать их хтмл. Для записи имени испольхзовать конвертер
+
+        Первые два шага запускаются единожды - по крайней мере раз в большой интервал
+
+        3 Этот шаг запускается также очень редко - тк он обновляет базу данных. но пока его нужно часто запускать.
+        Итак здесь мы проходим по каждому хтмл файлу автобуса, обрабатываем его и закидываем в БД.
+
+        4 Этот шаг самый частый и рпботает он всегда - . На основе входных данных - делаем запрос к БД и получаем массив автобусов.
+
+
+
+         */
+
+        DbHelper.getInstance().clearTable();
+
+        CashWorker cashWorker = CashWorker.getInstance();
+       // cashWorker.saveAllBusesPage();
+
+        List<Bus> listBuses =
+                BusesNamesLoader.getInstance().loadAllBuses();
+
+        int size = listBuses.size();
+
+        for(int i = 0; i < 10; i++){
+            Bus bus = listBuses.get(i);
+            cashWorker.saveBusPage(bus);
+        }
+
+        listBuses.size();
 
 
        /* String str = "14:35";
@@ -139,7 +173,7 @@ public class MainClass {
 //        InfoLoader infoLoader = InfoLoader.getInstance();*/
 //
 //        String html = "";
-//        //html = infoLoader.getHtmlCodyByUrl(url);
+//        //html = infoLoader.getHtmlCodeByUrl(url);
 //
 //        try {
 //            html = new Scanner(new File(path)).useDelimiter("\\Z").next();
@@ -181,14 +215,5 @@ public class MainClass {
 ////        System.out.println(html);
 //    }
 
-    private static List<Bus> loadAllBuses() {
-        final String url = "http://mybuses.ru/moscow/";
 
-        InfoLoader infoLoader = InfoLoader.getInstance();
-
-        String html = infoLoader.getHtmlCodyByUrl(url);
-
-        return infoLoader.getListBuses(html, url);
-
-    }
 }

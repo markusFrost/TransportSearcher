@@ -3,6 +3,7 @@ package models;
 public class Bus {
     private String mName;
     private String mUrl;
+    private String mHtmlCode;
 
     public String getName() {
         return mName;
@@ -18,5 +19,13 @@ public class Bus {
 
     public void setUrl(String url) {
         mUrl = url;
+    }
+
+    public String getHtmlCode() {
+        return mHtmlCode;
+    }
+
+    public void setHtmlCode(String htmlCode) {
+        mHtmlCode = htmlCode;
     }
 }
